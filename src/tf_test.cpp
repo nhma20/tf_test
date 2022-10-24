@@ -30,6 +30,7 @@
 // using namespace std::chrono;
 using namespace std::chrono_literals;
 
+
 class TFTest : public rclcpp::Node {
 public:
 	TFTest() : Node("TFTest") {
@@ -106,7 +107,10 @@ private:
   long counter = 0;
 
   void transform_points_to_world(const geometry_msgs::msg::PointStamped::SharedPtr msg);
+
 };
+
+
 
 
 void TFTest::transform_points_to_world(const geometry_msgs::msg::PointStamped::SharedPtr msg)
@@ -158,12 +162,19 @@ void TFTest::transform_points_to_world(const geometry_msgs::msg::PointStamped::S
 
   rotation_matrix_t test_R = quatToMat(t_rot);
 
+  RCLCPP_INFO(this->get_logger(),  "R is: \n  %f \t %f \t %f \n %f \t %f \t %f \n %f \t %f \t %f \n", 
+        test_R(0,0),test_R(0,1),test_R(0,2),
+        test_R(1,0),test_R(1,1),test_R(1,2),
+        test_R(2,0),test_R(2,1),test_R(2,2));
+
+  quat_t quat_test = matToQuat(test_R);
+
+  RCLCPP_INFO(this->get_logger(),  "Q is: \n  %f \t %f \t %f \t %f \n", 
+        quat_test(0),quat_test(1),quat_test(2),quat_test(3));
+
+
+
   transform_t d_to_w_t = getTransformMatrix(t_xyz, t_rot);
-
-
-
-  // @@@ NOT IN SAME COORDINATE SYSTEM; CURRENT APPROACH IS WRONG!
-  // world_point = translate_world_to_drone + rot_world_to_drone(local_point) ?
 
 
   // transform point from local to world frame
@@ -185,25 +196,6 @@ void TFTest::transform_points_to_world(const geometry_msgs::msg::PointStamped::S
 
 	quat_t point_world = d_to_w_t * point_local; // sort of works
 
-	// vector_t point_local;
-	// point_local(0) = msg->point.x;
-	// point_local(1) = msg->point.y;
-	// point_local(2) = msg->point.z;
-
-	// rotation_matrix_t rot_mat;
-	// vector_t rpy = quatToEul(t_rot);
-	// rpy(0) = rpy(0);
-	// rpy(1) = rpy(1); // -
-	// rpy(2) = rpy(2); // -
-	// rot_mat = eulToR(rpy);
-
-	// vector_t rot_pl_xyz = rot_mat * point_local;
-
-  // vector_t point_world;
-	// point_world(0) = rot_pl_xyz(0) + t.transform.translation.x; 
-	// point_world(1) = rot_pl_xyz(1) + t.transform.translation.y; // -
-	// point_world(2) = rot_pl_xyz(2) + t.transform.translation.z; // -
-
   RCLCPP_INFO(this->get_logger(),  "Point world coordinates are: \n X: %f \t Y: %f \t Z: %f \n ", 
         point_world(0), point_world(1), point_world(2));
 
@@ -214,8 +206,6 @@ void TFTest::transform_points_to_world(const geometry_msgs::msg::PointStamped::S
 	msg_out.point.y = point_world(1);
 	msg_out.point.z = point_world(2);
 	output_point_pub->publish(msg_out);
-
-  // BASICALLY JUST MOVED THE POINT THE RIGHT PLACE, BUT IN THE DRONE FRAME - FIX!
 
 }
 
