@@ -160,6 +160,12 @@ void TFTest::transform_points_to_world(const geometry_msgs::msg::PointStamped::S
 
   transform_t d_to_w_t = getTransformMatrix(t_xyz, t_rot);
 
+
+
+  // @@@ NOT IN SAME COORDINATE SYSTEM; CURRENT APPROACH IS WRONG!
+  // world_point = translate_world_to_drone + rot_world_to_drone(local_point) ?
+
+
   // transform point from local to world frame
 
   quat_t point_local; // only quat to get 4 vector
