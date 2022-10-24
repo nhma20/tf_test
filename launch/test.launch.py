@@ -12,7 +12,7 @@ def generate_launch_description():
     tf_drone_to_iwr = Node(
         package="tf2_ros",
         executable="static_transform_publisher",
-        arguments=["0", "0", "1", "0", "0", "0", "world", "drone"]
+        arguments=["0", "0", "1", "0", "-0.7", "0.7", "world", "drone"]
     )
 
     tf_test_node = Node(

@@ -120,8 +120,8 @@ void TFTest::transform_points_to_world(const geometry_msgs::msg::PointStamped::S
     {
       
       t = tf_buffer_->lookupTransform(
-      "drone",
       "world",
+      "drone",
       tf2::TimePointZero);
 
       std::cout << "T is:" << std::endl;
