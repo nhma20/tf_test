@@ -9,10 +9,16 @@ import os
 
 def generate_launch_description():
 
-    tf_drone_to_iwr = Node(
+    tf_world_to_drone = Node(
         package="tf2_ros",
         executable="static_transform_publisher",
         arguments=["0", "0", "1", "0", "-0.7", "0.7", "world", "drone"]
+    )
+
+    tf_drone_to_iwr = Node(
+        package="tf2_ros",
+        executable="static_transform_publisher",
+        arguments=["0", "0", "0.05", "0", "0", "0", "drone", "iwr6843_frame"]
     )
 
     tf_test_node = Node(
@@ -21,6 +27,7 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
+        tf_world_to_drone,
         tf_drone_to_iwr,
         tf_test_node
     ])
